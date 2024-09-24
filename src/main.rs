@@ -4,14 +4,6 @@ struct Todo {
     map: HashMap<String, bool>,
 }
 
-fn parse_str_to_bool(s: &str) -> Result<bool, String> {
-    match s.to_lowercase().as_str() {
-        "true" => Ok(true),
-        "false" => Ok(false),
-        _ => Err(format!("Cannot parse '{}' as bool", s)),
-    }
-}
-
 impl Todo {
     fn new() -> Result<Todo, std::io::Error> {
         let mut f = std::fs::OpenOptions::new()
