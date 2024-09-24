@@ -1,4 +1,8 @@
-use std::{collections::HashMap, io::Read};
+use std::{
+    collections::HashMap,
+    fs::{write, OpenOptions},
+    io::Read,
+};
 
 struct Todo {
     map: HashMap<String, bool>,
@@ -6,12 +10,13 @@ struct Todo {
 
 impl Todo {
     fn new() -> Result<Todo, std::io::Error> {
-        let mut f = std::fs::OpenOptions::new()
+        let mut f = OpenOptions::new()
             .write(true)
             .create(true)
             .read(true)
             .open("db.txt")?;
         let mut content = String::new();
+
         f.read_to_string(&mut content)?;
 
         let mut map = HashMap::new();
@@ -42,7 +47,7 @@ impl Todo {
             content.push_str(&record);
         }
 
-        std::fs::write("db.txt", content)
+        write("db.txt", content)
     }
 
     fn complete(&mut self, key: &String) -> Option<()> {
