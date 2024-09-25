@@ -44,7 +44,7 @@ impl Todo {
 }
 
 fn main() {
-    let mut todo = Todo::new().expect("Initialisation of db failed");
+    let mut todo = Todo::new().expect("Initialization of db failed");
 
     let action = std::env::args().nth(1).expect("Please specify an action");
     let item = std::env::args().nth(2).expect("Please specify an item");
