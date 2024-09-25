@@ -22,7 +22,7 @@ impl Todo {
     }
 
     fn insert(&mut self, key: String) {
-        self.map.insert(key, true);
+        self.map.insert(key, false);
     }
 
     fn save(self) -> Result<(), std::io::Error> {
@@ -37,7 +37,7 @@ impl Todo {
 
     fn complete(&mut self, key: &String) -> Option<()> {
         match self.map.get_mut(key) {
-            Some(v) => Some(*v = false),
+            Some(v) => Some(*v = true),
             None => None,
         }
     }
@@ -48,6 +48,8 @@ fn main() {
 
     let action = std::env::args().nth(1).expect("Please specify an action");
     let item = std::env::args().nth(2).expect("Please specify an item");
+
+    println!("{item:?}");
 
     if action == "add" {
         todo.insert(item);
