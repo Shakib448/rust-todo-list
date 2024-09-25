@@ -1,7 +1,0 @@
-lulu	true
-Todo is not adding	true
-todo is awesome boss	true
-have	true
-Now it's working	true
-I'm already in	true
-rust is a steep learnign curve boss	true

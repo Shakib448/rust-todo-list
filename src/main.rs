@@ -1,8 +1,4 @@
-use std::{
-    collections::HashMap,
-    fs::{write, OpenOptions},
-    io::Read,
-};
+use std::{collections::HashMap, fs::OpenOptions};
 
 struct Todo {
     map: HashMap<String, bool>,
@@ -10,30 +6,19 @@ struct Todo {
 
 impl Todo {
     fn new() -> Result<Todo, std::io::Error> {
-        let mut f = OpenOptions::new()
+        let f = OpenOptions::new()
             .write(true)
             .create(true)
             .read(true)
-            .open("db.txt")?;
-        let mut content = String::new();
+            .open("db.json")?;
 
-        f.read_to_string(&mut content)?;
-
-        let mut map = HashMap::new();
-
-        for entries in content.lines() {
-            let mut values = entries.split('\t');
-            let key = values.next().expect("No Key");
-            let val = values.next().expect("No Value");
-            let parsed_val = match val {
-                "true" => true,
-                "false" => false,
-                _ => panic!("Invalid boolean value in db.txt: {}", val),
-            };
-
-            map.insert(String::from(key), parsed_val);
+        match serde_json::from_reader(f) {
+            Ok(map) => Ok(Todo { map }),
+            Err(e) if e.is_eof() => Ok(Todo {
+                map: HashMap::new(),
+            }),
+            Err(e) => panic!("An error occurred: {e:?}"),
         }
-        Ok(Todo { map })
     }
 
     fn insert(&mut self, key: String) {
@@ -41,13 +26,13 @@ impl Todo {
     }
 
     fn save(self) -> Result<(), std::io::Error> {
-        let mut content = String::new();
-        for (k, v) in self.map {
-            let record = format!("{}\t{}\n", k, v);
-            content.push_str(&record);
-        }
+        let f = std::fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open("db.json")?;
 
-        write("db.txt", content)
+        serde_json::to_writer_pretty(f, &self.map)?;
+        Ok(())
     }
 
     fn complete(&mut self, key: &String) -> Option<()> {
